@@ -34,7 +34,6 @@
 
         .hidden-screen { display: none !important; }
         
-        /* Racing Track Styles */
         .race-track {
             background: linear-gradient(90deg, #334155 0%, #1e293b 100%);
             position: relative;
@@ -64,7 +63,6 @@
 
         #timer-bar { transition: width 0.1s linear; }
 
-        /* Animations */
         .shake {
             animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
         }
@@ -347,7 +345,8 @@
             }
 
             if (isMultiplayer) {
-                if (playerRole === 'p1') db.ref('rooms/' + roomId).update({ question: ques, answer: ans });
+                // Siapapun yang memicu fungsi ini akan mengupdate database untuk SEMUA PEMAIN
+                db.ref('rooms/' + roomId).update({ question: ques, answer: ans });
             } else {
                 currentAns = ans; q('#question').innerText = ques;
             }
@@ -358,9 +357,11 @@
                 score += 10;
                 timeLeft = Math.min(timeLeft + 8, 100); 
                 if (isMultiplayer) {
-                    let up = {}; up[playerRole + '_score'] = score;
+                    let up = {}; 
+                    up[playerRole + '_score'] = score;
                     db.ref('rooms/' + roomId).update(up);
-                    if (playerRole === 'p1') generateQuestion();
+                    // FIXED: Siapapun yang benar boleh ganti soal agar sinkron
+                    generateQuestion(); 
                 } else {
                     updateRaceTrack(score, 0);
                     generateQuestion();
@@ -387,6 +388,8 @@
 
                 if (timeLeft <= 0) { handleGameOver(); }
             }, 100);
+            
+            // Inisialisasi soal pertama
             if (!isMultiplayer || playerRole === 'p1') generateQuestion();
         }
 
