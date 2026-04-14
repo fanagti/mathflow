@@ -3,27 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Math Master Ultimate</title>
+    <title>Math Quest Evolution</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            touch-action: manipulation;
-            background: radial-gradient(circle at top left, #1e293b, #0f172a); /* Background Desktop */
+        :root {
+            --primary: #4f46e5;
+            --secondary: #0ea5e9;
         }
 
-        .numpad-btn { 
-            transition: all 0.1s ease; 
-            -webkit-tap-highlight-color: transparent; 
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            touch-action: manipulation;
+            background: #0f172a;
         }
-        
-        .numpad-btn:active { 
-            transform: scale(0.92); 
-            filter: brightness(0.9);
+
+        .app-height { height: 100vh; height: 100dvh; }
+
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
         }
-        
+
+        /* Custom Button Animations */
+        .numpad-btn {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .numpad-btn:active {
+            transform: scale(0.9) translateY(2px);
+            background-color: #f1f5f9;
+        }
+
+        .module-card {
+            transition: all 0.3s ease;
+        }
+        .module-card:active { transform: scale(0.97); }
+
+        /* Screen Transitions */
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Shake Animation for Errors */
         .shake { animation: shake 0.4s; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -31,65 +57,101 @@
             75% { transform: translateX(8px); }
         }
 
-        /* Responsive Height Fix */
-        .app-height {
-            height: 100vh;
-            height: 100dvh;
-        }
-
-        /* Ukuran Font Dinamis agar tidak pecah di layar kecil */
-        .dynamic-text-question {
-            font-size: clamp(3rem, 15vw, 5rem);
-        }
+        .hidden-screen { display: none !important; }
+        
+        /* Smooth progress bar */
+        #progress-bar { transition: width 0.4s ease; }
     </style>
 </head>
-<body class="flex justify-center items-center min-h-screen overflow-hidden">
+<body class="flex justify-center items-center p-0 sm:p-4">
 
-    <div class="w-full sm:max-w-[420px] sm:h-[850px] sm:rounded-[3rem] sm:border-[12px] sm:border-slate-800 sm:shadow-2xl bg-white app-height flex flex-col overflow-hidden relative transition-all duration-500">
+    <div id="main-container" class="w-full sm:max-w-[420px] glass app-height flex flex-col overflow-hidden sm:rounded-[2.5rem] sm:h-[850px] shadow-2xl transition-all border-x border-slate-200">
         
-        <div class="bg-slate-800 p-6 pt-10 sm:pt-6 text-white flex justify-between items-end border-b border-slate-700">
-            <div>
-                <p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-1">Total Score</p>
-                <p id="score" class="text-3xl font-black text-yellow-400 leading-none">0</p>
-            </div>
-            <div class="text-right">
-                <p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-1">Streak</p>
-                <div class="flex items-center gap-1 justify-end leading-none">
-                    <span class="text-orange-500 font-bold">🔥</span>
-                    <p id="streak" class="text-3xl font-black text-orange-500">0</p>
+        <div id="menu-screen" class="flex-1 flex flex-col p-8 fade-in">
+            <div class="mt-12 mb-10 text-center">
+                <div class="inline-block p-3 bg-indigo-50 rounded-2xl mb-4">
+                    <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                 </div>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tighter">MATH<span class="text-indigo-600">QUEST</span></h1>
+                <p class="text-slate-500 font-medium mt-1 uppercase text-[10px] tracking-[0.2em]">Evolution System v2.0</p>
             </div>
-        </div>
 
-        <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-            <div id="question-box" class="w-full">
-                <div id="question" class="dynamic-text-question font-black text-slate-800 mb-2 tracking-tighter leading-tight">
-                    -- + --
-                </div>
-                <div class="flex flex-col items-center">
-                    <div class="text-slate-200 font-black text-3xl mb-1">=</div>
-                    <div id="user-input" class="dynamic-text-question font-black text-blue-600 h-24 flex items-center justify-center border-b-[6px] border-blue-100 min-w-[150px] px-4 transition-all duration-100">
+            <div class="space-y-4 overflow-y-auto">
+                <button onclick="startGame(1)" class="module-card group w-full p-5 rounded-3xl bg-white border-2 border-slate-100 hover:border-indigo-500 hover:shadow-xl hover:shadow-indigo-100 transition-all text-left">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xl">1</div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Pemula</h3>
+                            <p class="text-xs text-slate-400">Dasar +, -, ×, ÷</p>
                         </div>
-                </div>
+                    </div>
+                </button>
+
+                <button onclick="startGame(2)" class="module-card group w-full p-5 rounded-3xl bg-white border-2 border-slate-100 hover:border-amber-500 hover:shadow-xl hover:shadow-amber-100 transition-all text-left">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xl">2</div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Aljabar (Cari X)</h3>
+                            <p class="text-xs text-slate-400">Persamaan x + a = b</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button onclick="startGame(3)" class="module-card group w-full p-5 rounded-3xl bg-white border-2 border-slate-100 hover:border-rose-500 hover:shadow-xl hover:shadow-rose-100 transition-all text-left">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-xl">3</div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Master Expert</h3>
+                            <p class="text-xs text-slate-400">Logika Variabel Lanjut</p>
+                        </div>
+                    </div>
+                </button>
             </div>
-            <div id="feedback" class="h-8 mt-6 font-black text-xs sm:text-sm uppercase tracking-[0.3em] transition-colors duration-200"></div>
         </div>
 
-        <div class="bg-slate-50 p-4 sm:p-6 pb-10 sm:pb-8 border-t border-slate-200 sm:rounded-t-[3rem] shadow-[0_-10px_40px_rgba(0,0,0,0.04)]">
-            <div class="grid grid-cols-3 gap-3">
-                <template id="btn-template">
-                    <button class="numpad-btn h-14 sm:h-16 bg-white border-b-4 border-slate-200 rounded-2xl text-2xl font-bold text-slate-700 hover:bg-slate-50"></button>
-                </template>
-
-                <div id="numpad-grid" class="contents"></div>
-
-                <button onclick="clearInp()" class="numpad-btn h-14 sm:h-16 bg-red-50 border-b-4 border-red-200 text-red-500 rounded-2xl font-black">C</button>
-                <button onclick="press('0')" class="numpad-btn h-14 sm:h-16 bg-white border-b-4 border-slate-200 rounded-2xl text-2xl font-bold text-slate-700">0</button>
-                <button onclick="del()" class="numpad-btn h-14 sm:h-16 bg-slate-200 border-b-4 border-slate-300 text-slate-600 rounded-2xl text-2xl">⌫</button>
-                
-                <button onclick="submit()" class="numpad-btn col-span-3 h-16 sm:h-20 bg-blue-600 border-b-4 border-blue-800 text-white rounded-2xl text-xl sm:text-2xl font-black shadow-lg shadow-blue-200 mt-2 flex items-center justify-center gap-2">
-                    SUBMIT
+        <div id="game-screen" class="flex-1 flex flex-col hidden-screen fade-in">
+            <div class="p-6 flex justify-between items-center bg-white border-b border-slate-100">
+                <button onclick="backToMenu()" class="p-2 rounded-xl bg-slate-50 text-slate-400 active:scale-90 transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
+                <div class="text-center">
+                    <p class="text-[9px] uppercase font-black tracking-widest text-slate-300 leading-none mb-1">Score</p>
+                    <p id="score" class="text-2xl font-black text-indigo-600 leading-none">0</p>
+                </div>
+                <div class="w-10"></div> </div>
+
+            <div class="flex-1 flex flex-col items-center justify-center p-8 bg-white relative overflow-hidden">
+                <div id="question-box" class="z-10 w-full text-center">
+                    <span id="module-label" class="inline-block px-4 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold tracking-widest mb-6">MODUL 1</span>
+                    <div id="question" class="text-6xl font-black text-slate-800 tracking-tighter mb-4">12 + 5</div>
+                    <div class="flex flex-col items-center gap-2">
+                        <div class="text-slate-200 text-4xl font-light">=</div>
+                        <div id="user-input" class="text-7xl font-black text-indigo-600 h-24 flex items-center justify-center border-b-8 border-indigo-50 min-w-[160px] transition-all"></div>
+                    </div>
+                </div>
+                <div id="feedback" class="h-6 mt-8 font-black text-sm uppercase tracking-[0.4em] transition-all"></div>
+            </div>
+
+            <div class="bg-slate-50 p-6 pb-10 rounded-t-[3rem] border-t border-slate-100">
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="press('1')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">1</button>
+                    <button onclick="press('2')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">2</button>
+                    <button onclick="press('3')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">3</button>
+                    <button onclick="press('4')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">4</button>
+                    <button onclick="press('5')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">5</button>
+                    <button onclick="press('6')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">6</button>
+                    <button onclick="press('7')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">7</button>
+                    <button onclick="press('8')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">8</button>
+                    <button onclick="press('9')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">9</button>
+                    
+                    <button onclick="clearInp()" class="numpad-btn h-14 bg-rose-50 text-rose-500 rounded-2xl font-bold text-lg">C</button>
+                    <button onclick="press('0')" class="numpad-btn h-14 bg-white shadow-sm rounded-2xl text-2xl font-bold text-slate-700">0</button>
+                    <button onclick="del()" class="numpad-btn h-14 bg-slate-200 text-slate-600 rounded-2xl font-bold text-xl flex items-center justify-center">⌫</button>
+                    
+                    <button onclick="submit()" class="numpad-btn col-span-3 h-16 bg-indigo-600 text-white rounded-2xl text-xl font-black mt-2 shadow-lg shadow-indigo-200 flex items-center justify-center gap-3">
+                        CEK JAWABAN
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -97,105 +159,97 @@
     <script>
         let currentAns = 0;
         let score = 0;
-        let streak = 0;
         let currentInp = "";
+        let currentModule = 1;
 
-        // Elements
+        const menuScreen = document.getElementById('menu-screen');
+        const gameScreen = document.getElementById('game-screen');
         const qElem = document.getElementById('question');
         const iElem = document.getElementById('user-input');
         const sElem = document.getElementById('score');
-        const stElem = document.getElementById('streak');
         const fElem = document.getElementById('feedback');
+        const mLabel = document.getElementById('module-label');
         const qBox = document.getElementById('question-box');
-        const grid = document.getElementById('numpad-grid');
 
-        // Render Numpad 1-9
-        for(let i=1; i<=9; i++) {
-            const btn = document.createElement('button');
-            btn.className = "numpad-btn h-14 sm:h-16 bg-white border-b-4 border-slate-200 rounded-2xl text-2xl font-bold text-slate-700 active:bg-slate-100";
-            btn.innerText = i;
-            btn.onclick = () => press(i.toString());
-            grid.appendChild(btn);
+        function startGame(level) {
+            currentModule = level;
+            score = 0;
+            sElem.innerText = score;
+            menuScreen.classList.add('hidden-screen');
+            gameScreen.classList.remove('hidden-screen');
+            generateQuestion();
+        }
+
+        function backToMenu() {
+            gameScreen.classList.add('hidden-screen');
+            menuScreen.classList.remove('hidden-screen');
         }
 
         function generateQuestion() {
+            let n1, n2, op;
             const ops = ['+', '-', '*', '/'];
-            const op = ops[Math.floor(Math.random() * ops.length)];
-            let n1, n2;
-
-            if (op === '+') {
-                n1 = Math.floor(Math.random() * 11);
-                n2 = Math.floor(Math.random() * 11);
-                currentAns = n1 + n2;
-                qElem.innerHTML = `${n1} <span class="text-blue-500">+</span> ${n2}`;
-            } else if (op === '-') {
-                n1 = Math.floor(Math.random() * 11);
-                n2 = Math.floor(Math.random() * (n1 + 1));
-                currentAns = n1 - n2;
-                qElem.innerHTML = `${n1} <span class="text-rose-500">-</span> ${n2}`;
-            } else if (op === '*') {
-                n1 = Math.floor(Math.random() * 10) + 1;
-                n2 = Math.floor(Math.random() * 10) + 1;
-                currentAns = n1 * n2;
-                qElem.innerHTML = `${n1} <span class="text-amber-500">&times;</span> ${n2}`;
-            } else {
-                let res = Math.floor(Math.random() * 10) + 1;
-                n2 = Math.floor(Math.random() * 9) + 1;
-                n1 = res * n2;
-                currentAns = res;
-                qElem.innerHTML = `${n1} <span class="text-indigo-600">&divide;</span> ${n2}`;
+            
+            if (currentModule === 1) {
+                mLabel.innerText = "MODUL 1: PEMULA";
+                op = ops[Math.floor(Math.random() * ops.length)];
+                if(op === '+') { n1 = r(0,10); n2 = r(0,10); currentAns = n1+n2; qElem.innerHTML = `${n1} <span class="text-indigo-500">+</span> ${n2}`; }
+                else if(op === '-') { n1 = r(5,10); n2 = r(0,n1); currentAns = n1-n2; qElem.innerHTML = `${n1} <span class="text-rose-500">-</span> ${n2}`; }
+                else if(op === '*') { n1 = r(1,10); n2 = r(1,5); currentAns = n1*n2; qElem.innerHTML = `${n1} <span class="text-amber-500">×</span> ${n2}`; }
+                else { currentAns = r(1,10); n2 = r(1,5); n1 = currentAns * n2; qElem.innerHTML = `${n1} <span class="text-sky-500">÷</span> ${n2}`; }
+            } 
+            else if (currentModule === 2) {
+                mLabel.innerText = "MODUL 2: CARI X";
+                n1 = r(1, 10);
+                currentAns = r(1, 15);
+                let target = n1 + currentAns;
+                qElem.innerHTML = Math.random() > 0.5 ? `x <span class="text-indigo-500">+</span> ${n1} = ${target}` : `${n1} <span class="text-indigo-500">+</span> x = ${target}`;
+            }
+            else if (currentModule === 3) {
+                mLabel.innerText = "MODUL 3: EXPERT";
+                let type = r(0, 1);
+                if (type === 0) {
+                    n1 = r(2, 5); currentAns = r(2, 10);
+                    let target = n1 * currentAns;
+                    qElem.innerHTML = `<span class="text-indigo-500">${n1}x</span> = ${target}`;
+                } else {
+                    n1 = r(5, 10); currentAns = r(5, 15);
+                    let target = currentAns - n1;
+                    qElem.innerHTML = `x <span class="text-indigo-500">-</span> ${n1} = ${target}`;
+                    currentAns = n1 + target;
+                }
             }
             
-            clearInp();
-            fElem.innerText = "";
-        }
-
-        function press(num) {
-            if (currentInp.length < 4) {
-                currentInp += num;
-                iElem.innerText = currentInp;
-            }
-        }
-
-        function del() {
-            currentInp = currentInp.slice(0, -1);
-            iElem.innerText = currentInp;
-        }
-
-        function clearInp() {
             currentInp = "";
             iElem.innerText = "";
+            fElem.innerText = "";
+            iElem.className = iElem.className.replace('text-green-500', 'text-indigo-600');
         }
+
+        function r(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function press(num) { if (currentInp.length < 4) { currentInp += num; iElem.innerText = currentInp; } }
+        function del() { currentInp = currentInp.slice(0, -1); iElem.innerText = currentInp; }
+        function clearInp() { currentInp = ""; iElem.innerText = ""; }
 
         function submit() {
             if (currentInp === "") return;
-
             if (parseInt(currentInp) === currentAns) {
-                score += (10 + streak);
-                streak++;
-                fElem.innerText = "EXCELLENT! +"+ (10 + streak - 1);
-                fElem.className = "h-8 mt-6 font-black text-xs sm:text-sm uppercase tracking-[0.3em] text-green-500";
-                
+                score += 10;
                 sElem.innerText = score;
-                stElem.innerText = streak;
-                
-                qBox.classList.add('scale-90', 'opacity-50');
+                fElem.innerText = "MANTAP! 🎉";
+                fElem.className = "h-6 mt-8 font-black text-sm uppercase tracking-[0.4em] text-emerald-500";
+                iElem.classList.add('scale-110');
                 setTimeout(() => {
-                    qBox.classList.remove('scale-90', 'opacity-50');
+                    iElem.classList.remove('scale-110');
                     generateQuestion();
-                }, 300);
+                }, 600);
             } else {
-                streak = 0;
-                stElem.innerText = "0";
-                fElem.innerText = "WRONG! TRY AGAIN";
-                fElem.className = "h-8 mt-6 font-black text-xs sm:text-sm uppercase tracking-[0.3em] text-red-500";
+                fElem.innerText = "COBA LAGI! ❌";
+                fElem.className = "h-6 mt-8 font-black text-sm uppercase tracking-[0.4em] text-rose-500";
                 qBox.classList.add('shake');
                 setTimeout(() => qBox.classList.remove('shake'), 400);
                 clearInp();
             }
         }
-
-        generateQuestion();
     </script>
 </body>
 </html>
