@@ -91,7 +91,7 @@
         <div id="game-header" class="hidden-screen p-4 bg-white border-b border-slate-100 z-10">
             <div class="flex justify-between items-center mb-2 px-2">
                 <button onclick="location.reload()" class="text-slate-400 font-black text-[10px] tracking-widest uppercase">Esc</button>
-                <div id="timer-text" class="text-indigo-600 font-black text-sm">RACE START!</div>
+                <div id="timer-text" class="text-indigo-600 font-black text-sm uppercase italic">Gaspol!</div>
             </div>
             
             <div class="race-track p-2 mb-3">
@@ -116,33 +116,41 @@
             </div>
         </div>
 
-        <div id="menu-screen" class="flex-1 flex flex-col p-8">
+        <div id="menu-screen" class="flex-1 flex flex-col p-8 overflow-y-auto">
             <div class="my-auto text-center">
                 <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl rotate-6">
                     <span class="text-white text-3xl font-black italic">GO!</span>
                 </div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-8">MATH<span class="text-indigo-600">RACER</span></h1>
+                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-8 italic">MATH<span class="text-indigo-600">RACER</span></h1>
 
                 <div class="space-y-3">
+                    <button onclick="selectLevelMenu(0)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-sky-500 flex justify-between items-center group transition-all shadow-sm">
+                        <div class="text-left"><span class="block text-[10px] font-black text-sky-400 uppercase">Stage 00</span><span class="font-bold text-slate-700">STARTER: Dasar (+/-)</span></div>
+                        <span class="text-2xl group-hover:translate-x-1 transition-transform">🛴</span>
+                    </button>
                     <button onclick="selectLevelMenu(1)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest">Level 01</span><span class="font-bold text-slate-700">Penjumlahan</span></div>
+                        <div class="text-left"><span class="block text-[10px] font-black text-indigo-400 uppercase">Stage 01</span><span class="font-bold text-slate-700">KART: Campuran 1-10</span></div>
                         <span class="text-2xl group-hover:translate-x-1 transition-transform">🚲</span>
                     </button>
                     <button onclick="selectLevelMenu(2)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-amber-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-amber-400 uppercase tracking-widest">Level 02</span><span class="font-bold text-slate-700">Aljabar X</span></div>
+                        <div class="text-left"><span class="block text-[10px] font-black text-amber-400 uppercase">Stage 02</span><span class="font-bold text-slate-700">DRIFT: Aljabar X</span></div>
                         <span class="text-2xl group-hover:translate-x-1 transition-transform">🏍️</span>
                     </button>
                     <button onclick="selectLevelMenu(3)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-rose-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-rose-400 uppercase tracking-widest">Level 03</span><span class="font-bold text-rose-600 italic font-black">EXPERT</span></div>
+                        <div class="text-left"><span class="block text-[10px] font-black text-rose-400 uppercase">Stage 03</span><span class="font-bold text-slate-700 italic">RALLY: Menengah</span></div>
                         <span class="text-2xl group-hover:translate-x-1 transition-transform">🏎️</span>
+                    </button>
+                    <button onclick="selectLevelMenu(4)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-emerald-500 flex justify-between items-center group transition-all shadow-sm">
+                        <div class="text-left"><span class="block text-[10px] font-black text-emerald-400 uppercase">Stage 04</span><span class="font-bold text-emerald-600 italic font-black">F1: Expert Aljabar</span></div>
+                        <span class="text-2xl group-hover:translate-x-1 transition-transform">🚀</span>
                     </button>
                 </div>
 
                 <div class="mt-8 pt-8 border-t border-slate-100">
-                    <p class="text-[10px] font-black text-slate-400 uppercase mb-3">Input Room Code</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-3 text-center">Join Race by Code</p>
                     <div class="flex gap-2">
                         <input id="room-input" type="number" placeholder="Code" class="w-24 px-4 py-3 rounded-xl bg-slate-100 font-bold text-center outline-none">
-                        <button onclick="joinGame()" class="flex-1 bg-slate-800 text-white rounded-xl font-bold">JOIN RACE</button>
+                        <button onclick="joinGame()" class="flex-1 bg-slate-800 text-white rounded-xl font-bold">JOIN LOBBY</button>
                     </div>
                 </div>
             </div>
@@ -150,7 +158,7 @@
 
         <div id="level-modal" class="hidden-screen fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div class="bg-white w-full max-w-[320px] rounded-[2.5rem] p-8 text-center shadow-2xl transform scale-100">
-                <h2 id="selected-level-title" class="text-2xl font-black text-slate-800 mb-6 italic">READY?</h2>
+                <h2 id="selected-level-title" class="text-2xl font-black text-slate-800 mb-6 italic uppercase">READY?</h2>
                 <div class="space-y-3">
                     <button onclick="startAction('solo')" class="w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-black hover:bg-slate-200 transition-colors">SINGLE PLAYER</button>
                     <button onclick="startAction('multi')" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200">MULTIPLAYER (1VS1)</button>
@@ -160,18 +168,18 @@
         </div>
 
         <div id="waiting-screen" class="hidden-screen flex-1 flex flex-col p-8 text-center justify-center">
-            <h2 class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-4">Lobby ID</h2>
+            <h2 class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-4 text-center">Lobby ID</h2>
             <div class="text-6xl font-black text-slate-800 mb-8" id="display-room-id">0000</div>
             <div class="flex flex-col items-center">
                 <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
                 <p class="font-bold text-slate-400 italic">WAITING FOR OPPONENT...</p>
             </div>
-            <button onclick="location.reload()" class="mt-12 text-rose-500 font-bold text-xs">EXIT LOBBY</button>
+            <button onclick="location.reload()" class="mt-12 text-rose-500 font-bold text-xs uppercase">Exit Lobby</button>
         </div>
 
         <div id="game-screen" class="hidden-screen flex-1 flex flex-col">
             <div class="flex-grow flex flex-col items-center justify-center p-4">
-                <div id="question" class="text-5xl sm:text-7xl font-black text-slate-800 mb-4 tracking-tighter italic">0 + 0</div>
+                <div id="question" class="text-5xl sm:text-6xl font-black text-slate-800 mb-4 tracking-tighter italic">x + 0 = 0</div>
                 <div id="user-input" class="text-6xl font-black text-indigo-600 h-20 border-b-8 border-indigo-100 min-w-[140px] flex justify-center items-center"></div>
             </div>
             
@@ -197,11 +205,9 @@
         <div id="custom-alert" class="hidden-screen fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-6">
             <div class="bg-white w-full max-w-[320px] rounded-[3rem] p-8 text-center shadow-2xl border-b-8 border-slate-200">
                 <div id="alert-icon" class="text-6xl mb-4">🏆</div>
-                <h2 id="alert-title" class="text-3xl font-black text-slate-800 mb-2 italic uppercase tracking-tighter">YOU WIN!</h2>
-                <p id="alert-msg" class="text-slate-500 font-bold mb-8">Skor akhir kamu luar biasa!</p>
-                <button onclick="location.reload()" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200 active:scale-95 transition-all uppercase tracking-widest">
-                    Main Lagi
-                </button>
+                <h2 id="alert-title" class="text-3xl font-black text-slate-800 mb-2 italic uppercase">YOU WIN!</h2>
+                <p id="alert-msg" class="text-slate-500 font-bold mb-8 text-center">Balapan luar biasa!</p>
+                <button onclick="location.reload()" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200 uppercase">Main Lagi</button>
             </div>
         </div>
 
@@ -221,7 +227,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let currentAns, score = 0, currentInp = "", timeLeft = 100, timerInterval, currentModule = 1;
+        let currentAns, score = 0, currentInp = "", timeLeft = 100, timerInterval, currentModule = 0;
         let isMultiplayer = false, roomId = null, playerRole = null;
         const TARGET_SCORE = 200; 
 
@@ -229,7 +235,7 @@
 
         function selectLevelMenu(lvl) {
             currentModule = lvl;
-            const titles = ["", "LEVEL 01: BEGINNER", "LEVEL 02: ALGEBRA", "LEVEL 03: EXPERT"];
+            const titles = ["STAGE 00: STARTER", "STAGE 01: KART", "STAGE 02: DRIFT", "STAGE 03: RALLY", "STAGE 04: F1"];
             q('#selected-level-title').innerText = titles[lvl];
             q('#level-modal').classList.remove('hidden-screen');
         }
@@ -246,7 +252,6 @@
             }
         }
 
-        // === MATCHMAKING ===
         function findMatch() {
             setupUI('waiting');
             db.ref('rooms').once('value', (snap) => {
@@ -269,8 +274,7 @@
             playerRole = 'p1'; isMultiplayer = true;
             q('#display-room-id').innerText = roomId;
             db.ref('rooms/' + roomId).set({
-                status: 'waiting',
-                level: currentModule,
+                status: 'waiting', level: currentModule,
                 p1_score: 0, p2_score: 0,
                 question: "Wait...", answer: 0
             });
@@ -301,12 +305,7 @@
             db.ref('rooms/' + roomId).on('value', (s) => {
                 const d = s.val();
                 if (!d) return;
-
-                const p1Score = d.p1_score || 0;
-                const p2Score = d.p2_score || 0;
-                
-                updateRaceTrack(p1Score, p2Score);
-
+                updateRaceTrack(d.p1_score || 0, d.p2_score || 0);
                 if (d.status === 'playing') {
                     setupUI('game');
                     currentAns = d.answer;
@@ -319,7 +318,6 @@
         function updateRaceTrack(p1, p2) {
             const p1Pos = Math.min((p1 / TARGET_SCORE) * 85, 85);
             const p2Pos = Math.min((p2 / TARGET_SCORE) * 85, 85);
-            
             q('#p1-rider').style.left = p1Pos + "%";
             if (isMultiplayer) {
                 q('#p2-rider').classList.remove('hidden');
@@ -327,29 +325,56 @@
             }
         }
 
-        // === ENGINE ===
         function generateQuestion() {
-            let n1 = Math.floor(Math.random() * 10) + 1;
-            let n2 = Math.floor(Math.random() * 10) + 1;
             let ques, ans;
+            const opType = Math.floor(Math.random() * 4);
 
-            if (currentModule === 1) {
-                ans = n1 + n2; ques = `${n1} + ${n2}`;
-            } else if (currentModule === 2) {
+            if (currentModule === 0) {
+                // LEVEL 0: STARTER (Hanya + dan - angka 1-5)
+                let n1 = Math.floor(Math.random() * 5) + 1;
+                let n2 = Math.floor(Math.random() * 5) + 1;
+                if (Math.random() > 0.5) { ans = n1 + n2; ques = `${n1} + ${n2}`; }
+                else { let m = Math.max(n1,n2), s = Math.min(n1,n2); ans = m-s; ques = `${m} - ${s}`; }
+            } 
+            else if (currentModule === 1) {
+                // LEVEL 1: Dasar Campuran
+                let n1 = Math.floor(Math.random() * 10) + 1;
+                let n2 = Math.floor(Math.random() * 10) + 1;
+                if (opType === 0) { ans = n1 + n2; ques = `${n1} + ${n2}`; }
+                else if (opType === 1) { let m = Math.max(n1,n2), s = Math.min(n1,n2); ans = m-s; ques = `${m} - ${s}`; }
+                else if (opType === 2) { n1 = Math.floor(Math.random()*5)+1; ans = n1*2; ques = `${n1} x 2`; }
+                else { ans = Math.floor(Math.random()*5)+1; ques = `${ans*2} : 2`; }
+            } 
+            else if (currentModule === 2) {
+                // LEVEL 2: Aljabar Dasar
+                let n1 = Math.floor(Math.random() * 15) + 2;
                 ans = Math.floor(Math.random() * 10) + 1;
-                ques = `x + ${n1} = ${n1 + ans}`;
-            } else {
-                n1 = Math.floor(Math.random() * 5) + 2; 
-                ans = Math.floor(Math.random() * 9) + 2;
-                ques = `${n1}x = ${n1 * ans}`;
+                if (opType === 0) { ques = `x + ${n1} = ${ans + n1}`; }
+                else if (opType === 1) { ques = `x - ${n1} = ${ans}`; ans = ans + n1; }
+                else if (opType === 2) { n1 = Math.floor(Math.random()*5)+2; ques = `${n1}x = ${n1*ans}`; }
+                else { n1 = Math.floor(Math.random()*5)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
+            } 
+            else if (currentModule === 3) {
+                // LEVEL 3: Menengah
+                let n1 = Math.floor(Math.random() * 40) + 10;
+                ans = Math.floor(Math.random() * 20) + 5;
+                if (opType === 0) { ques = `${n1} + x = ${n1 + ans}`; }
+                else if (opType === 1) { ques = `${n1 + ans} - x = ${n1}`; }
+                else if (opType === 2) { n1 = Math.floor(Math.random()*12)+2; ques = `${n1}x = ${n1*ans}`; }
+                else { n1 = Math.floor(Math.random()*10)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
+            } 
+            else {
+                // LEVEL 4: Expert
+                let n1 = Math.floor(Math.random() * 100) + 20;
+                ans = Math.floor(Math.random() * 50) + 10;
+                if (opType === 0) { ques = `x + ${n1} = ${ans + n1}`; }
+                else if (opType === 1) { ques = `${n1 + ans} - x = ${ans}`; ans = n1; }
+                else if (opType === 2) { n1 = Math.floor(Math.random()*20)+5; ques = `${n1}x = ${n1*ans}`; }
+                else { n1 = Math.floor(Math.random()*15)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
             }
 
-            if (isMultiplayer) {
-                // Siapapun yang memicu fungsi ini akan mengupdate database untuk SEMUA PEMAIN
-                db.ref('rooms/' + roomId).update({ question: ques, answer: ans });
-            } else {
-                currentAns = ans; q('#question').innerText = ques;
-            }
+            if (isMultiplayer) db.ref('rooms/' + roomId).update({ question: ques, answer: ans });
+            else { currentAns = ans; q('#question').innerText = ques; }
         }
 
         function submitAns() {
@@ -357,23 +382,14 @@
                 score += 10;
                 timeLeft = Math.min(timeLeft + 8, 100); 
                 if (isMultiplayer) {
-                    let up = {}; 
-                    up[playerRole + '_score'] = score;
+                    let up = {}; up[playerRole + '_score'] = score;
                     db.ref('rooms/' + roomId).update(up);
-                    // FIXED: Siapapun yang benar boleh ganti soal agar sinkron
                     generateQuestion(); 
-                } else {
-                    updateRaceTrack(score, 0);
-                    generateQuestion();
-                }
+                } else { updateRaceTrack(score, 0); generateQuestion(); }
                 clearInp();
             } else {
-                const inputDisplay = q('#user-input');
-                inputDisplay.classList.add('text-rose-500', 'shake');
-                setTimeout(() => {
-                    inputDisplay.classList.remove('text-rose-500', 'shake');
-                    clearInp();
-                }, 400);
+                q('#user-input').classList.add('text-rose-500', 'shake');
+                setTimeout(() => { q('#user-input').classList.remove('text-rose-500', 'shake'); clearInp(); }, 400);
             }
         }
 
@@ -382,64 +398,37 @@
             timerInterval = setInterval(() => {
                 timeLeft -= (0.4 + (score / 200));
                 q('#timer-bar').style.width = timeLeft + "%";
-                
                 if (timeLeft <= 30) q('#timer-bar').classList.replace('bg-indigo-500', 'bg-rose-500');
                 else q('#timer-bar').classList.replace('bg-rose-500', 'bg-indigo-500');
-
-                if (timeLeft <= 0) { handleGameOver(); }
+                if (timeLeft <= 0) handleGameOver();
             }, 100);
-            
-            // Inisialisasi soal pertama
             if (!isMultiplayer || playerRole === 'p1') generateQuestion();
         }
 
         function handleGameOver() {
             clearInterval(timerInterval);
-            const alertModal = q('#custom-alert');
-            const alertTitle = q('#alert-title');
-            const alertMsg = q('#alert-msg');
-            const alertIcon = q('#alert-icon');
-
+            const modal = q('#custom-alert'), title = q('#alert-title'), msg = q('#alert-msg'), icon = q('#alert-icon');
             if (isMultiplayer) {
-                const s1 = parseFloat(q('#p1-rider').style.left);
-                const s2 = parseFloat(q('#p2-rider').style.left);
-                
-                let myPos = playerRole === 'p1' ? s1 : s2;
-                let opPos = playerRole === 'p1' ? s2 : s1;
-
-                if (myPos > opPos) {
-                    alertTitle.innerText = "YOU WIN!"; alertIcon.innerText = "🏆";
-                    alertMsg.innerText = `Hebat! Kamu menang dengan skor ${score}!`;
-                } else if (myPos < opPos) {
-                    alertTitle.innerText = "DEFEAT!"; alertIcon.innerText = "💀";
-                    alertMsg.innerText = "Lawanmu lebih cepat. Coba lagi!";
-                } else {
-                    alertTitle.innerText = "DRAW!"; alertIcon.innerText = "🤝";
-                    alertMsg.innerText = "Hasil seri! Balapan yang sengit!";
-                }
-                db.ref('rooms/' + roomId).remove();
-            } else {
-                alertTitle.innerText = "FINISH!";
-                alertIcon.innerText = "🏁";
-                alertMsg.innerText = `Waktu habis! Skor akhir kamu: ${score}`;
-            }
-
-            alertModal.classList.remove('hidden-screen');
+                db.ref('rooms/' + roomId).once('value', (s) => {
+                    const d = s.val();
+                    const s1 = d.p1_score, s2 = d.p2_score;
+                    let my = playerRole === 'p1' ? s1 : s2, op = playerRole === 'p1' ? s2 : s1;
+                    if (my > op) { title.innerText = "YOU WIN!"; icon.innerText = "🏆"; msg.innerText = `Skor ${my} vs ${op}. Kamu juara!`; }
+                    else if (my < op) { title.innerText = "DEFEAT!"; icon.innerText = "💀"; msg.innerText = `Skor ${my} vs ${op}. Lawan lebih cepat!`; }
+                    else { title.innerText = "DRAW!"; icon.innerText = "🤝"; msg.innerText = "Seri! Balapan yang sengit."; }
+                    db.ref('rooms/' + roomId).remove();
+                });
+            } else { title.innerText = "FINISH!"; icon.innerText = "🏁"; msg.innerText = `Waktu habis! Skor akhir: ${score}`; }
+            modal.classList.remove('hidden-screen');
         }
 
         function setupUI(screen) {
-            q('#menu-screen').classList.add('hidden-screen');
-            q('#waiting-screen').classList.add('hidden-screen');
-            q('#game-screen').classList.add('hidden-screen');
-            q('#game-header').classList.add('hidden-screen');
+            ['#menu-screen', '#waiting-screen', '#game-screen', '#game-header'].forEach(id => q(id).classList.add('hidden-screen'));
             if (screen === 'waiting') q('#waiting-screen').classList.remove('hidden-screen');
-            if (screen === 'game') {
-                q('#game-screen').classList.remove('hidden-screen');
-                q('#game-header').classList.remove('hidden-screen');
-            }
+            if (screen === 'game') { q('#game-screen').classList.remove('hidden-screen'); q('#game-header').classList.remove('hidden-screen'); }
         }
 
-        function press(n) { if (currentInp.length < 3) { currentInp += n; q('#user-input').innerText = currentInp; } }
+        function press(n) { if (currentInp.length < 5) { currentInp += n; q('#user-input').innerText = currentInp; } }
         function del() { currentInp = currentInp.slice(0, -1); q('#user-input').innerText = currentInp; }
         function clearInp() { currentInp = ""; q('#user-input').innerText = ""; }
     </script>
