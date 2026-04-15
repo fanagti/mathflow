@@ -58,7 +58,7 @@
             position: absolute;
             transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             font-size: 24px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            filter: drop-shadow(0(0,0,0,0.5));
         }
 
         #timer-bar { transition: width 0.1s linear; }
@@ -82,6 +82,10 @@
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+
+        /* Custom Scrollbar */
+        #room-list::-webkit-scrollbar { width: 4px; }
+        #room-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="flex justify-center items-center">
@@ -116,41 +120,51 @@
             </div>
         </div>
 
-        <div id="menu-screen" class="flex-1 flex flex-col p-8 overflow-y-auto">
-            <div class="my-auto text-center">
-                <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl rotate-6">
-                    <span class="text-white text-3xl font-black italic">GO!</span>
-                </div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-8 italic">MATH<span class="text-indigo-600">RACER</span></h1>
-
-                <div class="space-y-3">
-                    <button onclick="selectLevelMenu(0)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-sky-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-sky-400 uppercase">Stage 00</span><span class="font-bold text-slate-700">STARTER: Dasar (+/-)</span></div>
-                        <span class="text-2xl group-hover:translate-x-1 transition-transform">🛴</span>
-                    </button>
-                    <button onclick="selectLevelMenu(1)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-indigo-400 uppercase">Stage 01</span><span class="font-bold text-slate-700">KART: Campuran 1-10</span></div>
-                        <span class="text-2xl group-hover:translate-x-1 transition-transform">🚲</span>
-                    </button>
-                    <button onclick="selectLevelMenu(2)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-amber-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-amber-400 uppercase">Stage 02</span><span class="font-bold text-slate-700">DRIFT: Aljabar X</span></div>
-                        <span class="text-2xl group-hover:translate-x-1 transition-transform">🏍️</span>
-                    </button>
-                    <button onclick="selectLevelMenu(3)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-rose-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-rose-400 uppercase">Stage 03</span><span class="font-bold text-slate-700 italic">RALLY: Menengah</span></div>
-                        <span class="text-2xl group-hover:translate-x-1 transition-transform">🏎️</span>
-                    </button>
-                    <button onclick="selectLevelMenu(4)" class="w-full p-4 bg-white rounded-2xl border-2 border-slate-100 hover:border-emerald-500 flex justify-between items-center group transition-all shadow-sm">
-                        <div class="text-left"><span class="block text-[10px] font-black text-emerald-400 uppercase">Stage 04</span><span class="font-bold text-emerald-600 italic font-black">F1: Expert Aljabar</span></div>
-                        <span class="text-2xl group-hover:translate-x-1 transition-transform">🚀</span>
-                    </button>
+        <div id="menu-screen" class="flex-1 flex flex-col p-6 overflow-y-auto">
+            <div class="my-auto">
+                <div class="text-center mb-6">
+                    <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-xl rotate-6">
+                        <span class="text-white text-2xl font-black italic">GO!</span>
+                    </div>
+                    <h1 class="text-3xl font-black text-slate-800 tracking-tighter italic">MATH<span class="text-indigo-600">RACER</span></h1>
                 </div>
 
-                <div class="mt-8 pt-8 border-t border-slate-100">
-                    <p class="text-[10px] font-black text-slate-400 uppercase mb-3 text-center">Join Race by Code</p>
-                    <div class="flex gap-2">
-                        <input id="room-input" type="number" placeholder="Code" class="w-24 px-4 py-3 rounded-xl bg-slate-100 font-bold text-center outline-none">
-                        <button onclick="joinGame()" class="flex-1 bg-slate-800 text-white rounded-xl font-bold">JOIN LOBBY</button>
+                <div class="space-y-2 mb-8">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Select Stage</p>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="selectLevelMenu(0)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-sky-500 flex justify-between items-center transition-all shadow-sm">
+                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-sky-400 uppercase">Stage 00</span><span class="font-bold text-slate-700 text-sm">STARTER: (+/-)</span></div>
+                            <span class="text-xl">🛴</span>
+                        </button>
+                        <button onclick="selectLevelMenu(1)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center transition-all shadow-sm">
+                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-indigo-400 uppercase">Stage 01</span><span class="font-bold text-slate-700 text-sm">KART: Campuran</span></div>
+                            <span class="text-xl">🚲</span>
+                        </button>
+                        <button onclick="selectLevelMenu(2)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-amber-500 flex justify-between items-center transition-all shadow-sm">
+                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-amber-400 uppercase">Stage 02</span><span class="font-bold text-slate-700 text-sm">DRIFT: Aljabar X</span></div>
+                            <span class="text-xl">🏍️</span>
+                        </button>
+                        <button onclick="selectLevelMenu(3)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-rose-500 flex justify-between items-center transition-all shadow-sm">
+                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-rose-400 uppercase">Stage 03</span><span class="font-bold text-slate-700 text-sm">RALLY: Menengah</span></div>
+                            <span class="text-xl">🏎️</span>
+                        </button>
+                        <button onclick="selectLevelMenu(4)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-emerald-500 flex justify-between items-center transition-all shadow-sm">
+                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-emerald-400 uppercase">Stage 04</span><span class="font-bold text-emerald-600 text-sm italic">F1: Expert</span></div>
+                            <span class="text-xl">🚀</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-100 rounded-[2rem] p-5">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 text-center">Live Lobby Browser</p>
+                    
+                    <div id="room-list" class="space-y-2 max-h-[180px] overflow-y-auto mb-4 px-1">
+                        <div class="text-center py-4 text-slate-400 text-xs italic">Searching for active races...</div>
+                    </div>
+
+                    <div class="flex gap-2 border-t border-slate-200 pt-4">
+                        <input id="room-input" type="number" placeholder="Code" class="w-20 px-3 py-2 rounded-lg bg-white font-bold text-center text-sm outline-none">
+                        <button onclick="joinGame()" class="flex-1 bg-slate-800 text-white rounded-lg font-bold text-sm py-2">JOIN BY CODE</button>
                     </div>
                 </div>
             </div>
@@ -158,10 +172,10 @@
 
         <div id="level-modal" class="hidden-screen fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div class="bg-white w-full max-w-[320px] rounded-[2.5rem] p-8 text-center shadow-2xl transform scale-100">
-                <h2 id="selected-level-title" class="text-2xl font-black text-slate-800 mb-6 italic uppercase">READY?</h2>
+                <h2 id="selected-level-title" class="text-2xl font-black text-slate-800 mb-6 italic uppercase tracking-tighter">READY?</h2>
                 <div class="space-y-3">
-                    <button onclick="startAction('solo')" class="w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-black hover:bg-slate-200 transition-colors">SINGLE PLAYER</button>
-                    <button onclick="startAction('multi')" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200">MULTIPLAYER (1VS1)</button>
+                    <button onclick="startAction('solo')" class="w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-black hover:bg-slate-200 transition-colors uppercase">Single Race</button>
+                    <button onclick="startAction('multi')" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200 uppercase">Create Lobby</button>
                     <button onclick="q('#level-modal').classList.add('hidden-screen')" class="w-full py-2 text-slate-400 font-bold text-xs uppercase mt-2">CANCEL</button>
                 </div>
             </div>
@@ -230,8 +244,45 @@
         let currentAns, score = 0, currentInp = "", timeLeft = 100, timerInterval, currentModule = 0;
         let isMultiplayer = false, roomId = null, playerRole = null;
         const TARGET_SCORE = 200; 
+        const STAGE_NAMES = ["STARTER", "KART", "DRIFT", "RALLY", "F1"];
 
         const q = (id) => document.getElementById(id.replace('#', ''));
+
+        // INITIALIZE ROOM LIST LISTENER
+        listenRoomList();
+
+        function listenRoomList() {
+            db.ref('rooms').on('value', (snap) => {
+                const rooms = snap.val();
+                const container = q('#room-list');
+                container.innerHTML = '';
+
+                let activeCount = 0;
+                if (rooms) {
+                    for (let id in rooms) {
+                        if (rooms[id].status === 'waiting') {
+                            activeCount++;
+                            const levelIndex = rooms[id].level;
+                            const div = document.createElement('div');
+                            div.className = "flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 shadow-sm hover:border-indigo-400 cursor-pointer transition-all";
+                            div.onclick = () => joinExistingRoom(id);
+                            div.innerHTML = `
+                                <div>
+                                    <span class="block text-[8px] font-black text-indigo-500 uppercase">LOBBY #${id}</span>
+                                    <span class="text-xs font-bold text-slate-700">Stage: ${STAGE_NAMES[levelIndex]}</span>
+                                </div>
+                                <div class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">JOIN 🏁</div>
+                            `;
+                            container.appendChild(div);
+                        }
+                    }
+                }
+
+                if (activeCount === 0) {
+                    container.innerHTML = '<div class="text-center py-4 text-slate-400 text-[10px] italic">No active lobbies. Create one!</div>';
+                }
+            });
+        }
 
         function selectLevelMenu(lvl) {
             currentModule = lvl;
@@ -243,36 +294,17 @@
         function startAction(mode) {
             q('#level-modal').classList.add('hidden-screen');
             if (mode === 'solo') {
-                isMultiplayer = false;
-                setupUI('game');
-                generateQuestion();
-                startTimer();
+                isMultiplayer = false; setupUI('game'); generateQuestion(); startTimer();
             } else {
-                findMatch();
+                createNewRoom();
             }
-        }
-
-        function findMatch() {
-            setupUI('waiting');
-            db.ref('rooms').once('value', (snap) => {
-                let foundId = null;
-                const rooms = snap.val();
-                if (rooms) {
-                    for (let id in rooms) {
-                        if (rooms[id].status === 'waiting' && rooms[id].level === currentModule) {
-                            foundId = id; break;
-                        }
-                    }
-                }
-                if (foundId) joinExistingRoom(foundId);
-                else createNewRoom();
-            });
         }
 
         function createNewRoom() {
             roomId = Math.floor(1000 + Math.random() * 8999);
             playerRole = 'p1'; isMultiplayer = true;
             q('#display-room-id').innerText = roomId;
+            setupUI('waiting');
             db.ref('rooms/' + roomId).set({
                 status: 'waiting', level: currentModule,
                 p1_score: 0, p2_score: 0,
@@ -284,21 +316,20 @@
 
         function joinExistingRoom(id) {
             roomId = id; playerRole = 'p2'; isMultiplayer = true;
-            db.ref('rooms/' + roomId).update({ status: 'playing' });
-            setupUI('game');
-            listenRoom();
+            db.ref('rooms/' + roomId).once('value', (s) => {
+                const d = s.val();
+                if(d && d.status === 'waiting') {
+                    currentModule = d.level; // Sync level with host
+                    db.ref('rooms/' + roomId).update({ status: 'playing' });
+                    setupUI('game'); listenRoom();
+                }
+            });
         }
 
         function joinGame() {
             const inputId = q('#room-input').value;
             if(!inputId) return;
-            roomId = inputId; playerRole = 'p2'; isMultiplayer = true;
-            db.ref('rooms/' + roomId).get().then(s => {
-                if(s.exists()) {
-                    db.ref('rooms/' + roomId).update({ status: 'playing' });
-                    setupUI('game'); listenRoom();
-                }
-            });
+            joinExistingRoom(inputId);
         }
 
         function listenRoom() {
@@ -330,14 +361,12 @@
             const opType = Math.floor(Math.random() * 4);
 
             if (currentModule === 0) {
-                // LEVEL 0: STARTER (Hanya + dan - angka 1-5)
                 let n1 = Math.floor(Math.random() * 5) + 1;
                 let n2 = Math.floor(Math.random() * 5) + 1;
                 if (Math.random() > 0.5) { ans = n1 + n2; ques = `${n1} + ${n2}`; }
                 else { let m = Math.max(n1,n2), s = Math.min(n1,n2); ans = m-s; ques = `${m} - ${s}`; }
             } 
             else if (currentModule === 1) {
-                // LEVEL 1: Dasar Campuran
                 let n1 = Math.floor(Math.random() * 10) + 1;
                 let n2 = Math.floor(Math.random() * 10) + 1;
                 if (opType === 0) { ans = n1 + n2; ques = `${n1} + ${n2}`; }
@@ -346,7 +375,6 @@
                 else { ans = Math.floor(Math.random()*5)+1; ques = `${ans*2} : 2`; }
             } 
             else if (currentModule === 2) {
-                // LEVEL 2: Aljabar Dasar
                 let n1 = Math.floor(Math.random() * 15) + 2;
                 ans = Math.floor(Math.random() * 10) + 1;
                 if (opType === 0) { ques = `x + ${n1} = ${ans + n1}`; }
@@ -355,7 +383,6 @@
                 else { n1 = Math.floor(Math.random()*5)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
             } 
             else if (currentModule === 3) {
-                // LEVEL 3: Menengah
                 let n1 = Math.floor(Math.random() * 40) + 10;
                 ans = Math.floor(Math.random() * 20) + 5;
                 if (opType === 0) { ques = `${n1} + x = ${n1 + ans}`; }
@@ -364,7 +391,6 @@
                 else { n1 = Math.floor(Math.random()*10)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
             } 
             else {
-                // LEVEL 4: Expert
                 let n1 = Math.floor(Math.random() * 100) + 20;
                 ans = Math.floor(Math.random() * 50) + 10;
                 if (opType === 0) { ques = `x + ${n1} = ${ans + n1}`; }
@@ -411,6 +437,7 @@
             if (isMultiplayer) {
                 db.ref('rooms/' + roomId).once('value', (s) => {
                     const d = s.val();
+                    if(!d) return;
                     const s1 = d.p1_score, s2 = d.p2_score;
                     let my = playerRole === 'p1' ? s1 : s2, op = playerRole === 'p1' ? s2 : s1;
                     if (my > op) { title.innerText = "YOU WIN!"; icon.innerText = "🏆"; msg.innerText = `Skor ${my} vs ${op}. Kamu juara!`; }
