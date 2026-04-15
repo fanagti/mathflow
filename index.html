@@ -3,232 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Math Quest: Moto Race Edition</title>
+    <title>Math Racer: Level 1-5 Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            touch-action: manipulation; 
-            background: #0f172a; 
-            color: #1e293b; 
-            overflow: hidden; 
-        }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; touch-action: manipulation; background: #0f172a; overflow: hidden; }
         .app-container { height: 100dvh; display: flex; flex-direction: column; }
-        
-        .numpad-btn { 
-            background: white; 
-            transition: all 0.1s ease; 
-            box-shadow: 0 4px 0 #e2e8f0; 
-        }
-        
-        .numpad-btn:active { 
-            transform: translateY(2px); 
-            box-shadow: 0 2px 0 #e2e8f0; 
-            background: #f8fafc; 
-        }
-
+        .numpad-btn { background: white; transition: all 0.1s ease; box-shadow: 0 4px 0 #e2e8f0; }
+        .numpad-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #e2e8f0; background: #f8fafc; }
         .hidden-screen { display: none !important; }
-        
-        .race-track {
-            background: linear-gradient(90deg, #334155 0%, #1e293b 100%);
-            position: relative;
-            height: 80px;
-            border-radius: 1rem;
-            border: 2px solid #475569;
-            overflow: hidden;
-        }
-
-        .finish-line {
-            position: absolute;
-            right: 10px;
-            top: 0;
-            bottom: 0;
-            width: 12px;
-            background-image: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%);
-            background-size: 6px 6px;
-            opacity: 0.3;
-        }
-
-        .vehicle {
-            position: absolute;
-            transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-size: 24px;
-            filter: drop-shadow(0(0,0,0,0.5));
-        }
-
-        #timer-bar { transition: width 0.1s linear; }
-
-        .shake {
-            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        #custom-alert > div {
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        /* Custom Scrollbar */
+        .race-track { background: linear-gradient(90deg, #334155 0%, #1e293b 100%); position: relative; height: 70px; border-radius: 1rem; border: 2px solid #475569; }
+        .vehicle { position: absolute; transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 24px; }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } }
         #room-list::-webkit-scrollbar { width: 4px; }
         #room-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="flex justify-center items-center">
 
-    <div id="main-app" class="w-full sm:max-w-[420px] bg-slate-50 app-container overflow-hidden relative sm:rounded-[2.5rem] sm:border-8 sm:border-slate-800 shadow-2xl">
+    <div id="main-app" class="w-full sm:max-w-[420px] bg-slate-50 app-container relative sm:rounded-[2.5rem] sm:border-8 sm:border-slate-800 shadow-2xl">
         
         <div id="game-header" class="hidden-screen p-4 bg-white border-b border-slate-100 z-10">
-            <div class="flex justify-between items-center mb-2 px-2">
-                <button onclick="location.reload()" class="text-slate-400 font-black text-[10px] tracking-widest uppercase">Esc</button>
-                <div id="timer-text" class="text-indigo-600 font-black text-sm uppercase italic">Gaspol!</div>
+            <div class="flex justify-between items-end mb-2 px-2">
+                <button onclick="location.reload()" class="text-slate-400 font-black text-[10px] tracking-widest uppercase mb-1">Esc</button>
+                <div class="text-center">
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase">Time</span>
+                    <span id="timer-digital" class="text-3xl font-black text-indigo-600 italic leading-none">60</span>
+                </div>
+                <div class="text-right">
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase">Score</span>
+                    <span id="my-score-val" class="text-xl font-black text-slate-700 leading-none">0</span>
+                </div>
             </div>
             
-            <div class="race-track p-2 mb-3">
-                <div class="finish-line"></div>
-                <div id="p1-rider" class="vehicle top-2 left-0" style="left: 0%">
-                    <div class="flex flex-col items-center">
-                        <span class="text-[10px] font-bold text-blue-400 leading-none">P1</span>
-                        <span id="p1-icon">🏍️</span>
-                    </div>
-                </div>
-                <div id="p2-rider" class="vehicle bottom-1 left-0 hidden" style="left: 0%">
-                    <div class="flex flex-col items-center">
-                        <span class="text-[10px] font-bold text-rose-400 leading-none">P2</span>
-                        <span id="p2-icon">🏎️</span>
-                    </div>
-                </div>
-                <div class="absolute top-1/2 left-0 right-0 h-[1px] border-t border-dashed border-slate-500 opacity-50"></div>
-            </div>
-
-            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div id="timer-bar" class="h-full bg-indigo-500 w-full"></div>
+            <div class="race-track p-2">
+                <div id="p1-rider" class="vehicle top-1.5 left-0" style="left: 0%"><span class="text-[10px] font-bold text-blue-400 block text-center">P1</span>🏍️</div>
+                <div id="p2-rider" class="vehicle bottom-0.5 left-0 hidden" style="left: 0%"><span class="text-[10px] font-bold text-rose-400 block text-center">P2</span>🏎️</div>
             </div>
         </div>
 
         <div id="menu-screen" class="flex-1 flex flex-col p-6 overflow-y-auto">
-            <div class="my-auto">
-                <div class="text-center mb-6">
-                    <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-xl rotate-6">
-                        <span class="text-white text-2xl font-black italic">GO!</span>
-                    </div>
-                    <h1 class="text-3xl font-black text-slate-800 tracking-tighter italic">MATH<span class="text-indigo-600">RACER</span></h1>
-                </div>
-
-                <div class="space-y-2 mb-8">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Select Stage</p>
-                    <div class="grid grid-cols-1 gap-2">
-                        <button onclick="selectLevelMenu(0)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-sky-500 flex justify-between items-center transition-all shadow-sm">
-                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-sky-400 uppercase">Stage 00</span><span class="font-bold text-slate-700 text-sm">STARTER: (+/-)</span></div>
-                            <span class="text-xl">🛴</span>
-                        </button>
-                        <button onclick="selectLevelMenu(1)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center transition-all shadow-sm">
-                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-indigo-400 uppercase">Stage 01</span><span class="font-bold text-slate-700 text-sm">KART: Campuran</span></div>
-                            <span class="text-xl">🚲</span>
-                        </button>
-                        <button onclick="selectLevelMenu(2)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-amber-500 flex justify-between items-center transition-all shadow-sm">
-                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-amber-400 uppercase">Stage 02</span><span class="font-bold text-slate-700 text-sm">DRIFT: Aljabar X</span></div>
-                            <span class="text-xl">🏍️</span>
-                        </button>
-                        <button onclick="selectLevelMenu(3)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-rose-500 flex justify-between items-center transition-all shadow-sm">
-                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-rose-400 uppercase">Stage 03</span><span class="font-bold text-slate-700 text-sm">RALLY: Menengah</span></div>
-                            <span class="text-xl">🏎️</span>
-                        </button>
-                        <button onclick="selectLevelMenu(4)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-emerald-500 flex justify-between items-center transition-all shadow-sm">
-                            <div class="text-left leading-tight"><span class="block text-[8px] font-black text-emerald-400 uppercase">Stage 04</span><span class="font-bold text-emerald-600 text-sm italic">F1: Expert</span></div>
-                            <span class="text-xl">🚀</span>
-                        </button>
-                    </div>
+            <div class="my-auto text-center">
+                <h1 class="text-3xl font-black text-slate-800 tracking-tighter mb-6 italic">MATH<span class="text-indigo-600">RACER</span></h1>
+                
+                <div class="grid grid-cols-1 gap-2 mb-6">
+                    <p class="text-[10px] font-black text-slate-400 uppercase text-left px-1">Pilih Level</p>
+                    <button onclick="selectLevelMenu(0)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center transition-all">
+                        <div class="text-left"><span class="block text-[8px] font-black text-indigo-400 uppercase">Level 1</span><span class="font-bold text-slate-700">STARTER (+/-)</span></div><span>🛴</span>
+                    </button>
+                    <button onclick="selectLevelMenu(1)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center transition-all">
+                        <div class="text-left"><span class="block text-[8px] font-black text-indigo-400 uppercase">Level 2</span><span class="font-bold text-slate-700">KART (Mix 1-10)</span></div><span>🚲</span>
+                    </button>
+                    <button onclick="selectLevelMenu(2)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center transition-all">
+                        <div class="text-left"><span class="block text-[8px] font-black text-indigo-400 uppercase">Level 3</span><span class="font-bold text-slate-700">DRIFT (Aljabar X)</span></div><span>🏍️</span>
+                    </button>
+                    <button onclick="selectLevelMenu(3)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center transition-all">
+                        <div class="text-left"><span class="block text-[8px] font-black text-indigo-400 uppercase">Level 4</span><span class="font-bold text-slate-700">RALLY (Menengah)</span></div><span>🏎️</span>
+                    </button>
+                    <button onclick="selectLevelMenu(4)" class="p-3 bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-500 flex justify-between items-center transition-all">
+                        <div class="text-left"><span class="block text-[8px] font-black text-indigo-400 uppercase">Level 5</span><span class="font-bold text-indigo-600 italic">F1 (Expert)</span></div><span>🚀</span>
+                    </button>
                 </div>
 
                 <div class="bg-slate-100 rounded-[2rem] p-5">
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 text-center">Live Lobby Browser</p>
-                    
-                    <div id="room-list" class="space-y-2 max-h-[180px] overflow-y-auto mb-4 px-1">
-                        <div class="text-center py-4 text-slate-400 text-xs italic">Searching for active races...</div>
-                    </div>
-
-                    <div class="flex gap-2 border-t border-slate-200 pt-4">
-                        <input id="room-input" type="number" placeholder="Code" class="w-20 px-3 py-2 rounded-lg bg-white font-bold text-center text-sm outline-none">
-                        <button onclick="joinGame()" class="flex-1 bg-slate-800 text-white rounded-lg font-bold text-sm py-2">JOIN BY CODE</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="level-modal" class="hidden-screen fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-white w-full max-w-[320px] rounded-[2.5rem] p-8 text-center shadow-2xl transform scale-100">
-                <h2 id="selected-level-title" class="text-2xl font-black text-slate-800 mb-6 italic uppercase tracking-tighter">READY?</h2>
-                <div class="space-y-3">
-                    <button onclick="startAction('solo')" class="w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-black hover:bg-slate-200 transition-colors uppercase">Single Race</button>
-                    <button onclick="startAction('multi')" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200 uppercase">Create Lobby</button>
-                    <button onclick="q('#level-modal').classList.add('hidden-screen')" class="w-full py-2 text-slate-400 font-bold text-xs uppercase mt-2">CANCEL</button>
+                    <p class="text-[10px] font-black text-slate-500 uppercase mb-3">Lobby Browser</p>
+                    <div id="room-list" class="space-y-2 max-h-[150px] overflow-y-auto mb-4"></div>
+                    <div class="flex gap-2"><input id="room-input" type="number" placeholder="Code" class="w-20 px-3 py-2 rounded-lg bg-white font-bold text-center outline-none"><button onclick="joinGame()" class="flex-1 bg-slate-800 text-white rounded-lg font-bold py-2">JOIN</button></div>
                 </div>
             </div>
         </div>
 
         <div id="waiting-screen" class="hidden-screen flex-1 flex flex-col p-8 text-center justify-center">
-            <h2 class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-4 text-center">Lobby ID</h2>
+            <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Room Code</span>
             <div class="text-6xl font-black text-slate-800 mb-8" id="display-room-id">0000</div>
-            <div class="flex flex-col items-center">
-                <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p class="font-bold text-slate-400 italic">WAITING FOR OPPONENT...</p>
-            </div>
-            <button onclick="location.reload()" class="mt-12 text-rose-500 font-bold text-xs uppercase">Exit Lobby</button>
+            <div class="animate-pulse font-bold text-slate-400 italic">MENUNGGU LAWAN...</div>
+            <button onclick="location.reload()" class="mt-12 text-rose-500 font-bold text-xs uppercase underline">Batalkan</button>
         </div>
 
         <div id="game-screen" class="hidden-screen flex-1 flex flex-col">
             <div class="flex-grow flex flex-col items-center justify-center p-4">
-                <div id="question" class="text-5xl sm:text-6xl font-black text-slate-800 mb-4 tracking-tighter italic">x + 0 = 0</div>
-                <div id="user-input" class="text-6xl font-black text-indigo-600 h-20 border-b-8 border-indigo-100 min-w-[140px] flex justify-center items-center"></div>
+                <div id="question" class="text-5xl font-black text-slate-800 mb-4 italic tracking-tighter">? + ? = ?</div>
+                <div id="user-input" class="text-6xl font-black text-indigo-600 h-20 border-b-8 border-indigo-100 min-w-[140px] flex justify-center items-center italic"></div>
             </div>
-            
-            <div class="p-6 bg-slate-100 border-t rounded-t-[2.5rem] shadow-inner">
+            <div class="p-6 bg-slate-100 border-t rounded-t-[2.5rem]">
                 <div class="grid grid-cols-3 gap-3 max-w-[320px] mx-auto">
-                    <button onclick="press('1')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">1</button>
-                    <button onclick="press('2')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">2</button>
-                    <button onclick="press('3')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">3</button>
-                    <button onclick="press('4')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">4</button>
-                    <button onclick="press('5')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">5</button>
-                    <button onclick="press('6')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">6</button>
-                    <button onclick="press('7')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">7</button>
-                    <button onclick="press('8')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">8</button>
-                    <button onclick="press('9')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">9</button>
+                    <button onclick="press('1')" class="numpad-btn h-14 rounded-xl text-xl font-bold">1</button>
+                    <button onclick="press('2')" class="numpad-btn h-14 rounded-xl text-xl font-bold">2</button>
+                    <button onclick="press('3')" class="numpad-btn h-14 rounded-xl text-xl font-bold">3</button>
+                    <button onclick="press('4')" class="numpad-btn h-14 rounded-xl text-xl font-bold">4</button>
+                    <button onclick="press('5')" class="numpad-btn h-14 rounded-xl text-xl font-bold">5</button>
+                    <button onclick="press('6')" class="numpad-btn h-14 rounded-xl text-xl font-bold">6</button>
+                    <button onclick="press('7')" class="numpad-btn h-14 rounded-xl text-xl font-bold">7</button>
+                    <button onclick="press('8')" class="numpad-btn h-14 rounded-xl text-xl font-bold">8</button>
+                    <button onclick="press('9')" class="numpad-btn h-14 rounded-xl text-xl font-bold">9</button>
                     <button onclick="clearInp()" class="numpad-btn h-14 bg-rose-50 text-rose-500 rounded-xl font-bold">C</button>
-                    <button onclick="press('0')" class="numpad-btn h-14 rounded-xl text-xl font-bold text-slate-700">0</button>
+                    <button onclick="press('0')" class="numpad-btn h-14 rounded-xl text-xl font-bold">0</button>
                     <button onclick="del()" class="numpad-btn h-14 rounded-xl text-slate-400 font-bold">⌫</button>
-                    <button onclick="submitAns()" class="col-span-3 h-16 bg-indigo-600 text-white rounded-2xl text-xl font-black shadow-lg mt-2 active:scale-95 transition-all">SUBMIT ANS</button>
+                    <button onclick="submitAns()" class="col-span-3 h-16 bg-indigo-600 text-white rounded-2xl text-xl font-black shadow-lg mt-2 active:scale-95 transition-all">SUBMIT</button>
                 </div>
             </div>
         </div>
 
-        <div id="custom-alert" class="hidden-screen fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-6">
-            <div class="bg-white w-full max-w-[320px] rounded-[3rem] p-8 text-center shadow-2xl border-b-8 border-slate-200">
-                <div id="alert-icon" class="text-6xl mb-4">🏆</div>
-                <h2 id="alert-title" class="text-3xl font-black text-slate-800 mb-2 italic uppercase">YOU WIN!</h2>
-                <p id="alert-msg" class="text-slate-500 font-bold mb-8 text-center">Balapan luar biasa!</p>
-                <button onclick="location.reload()" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200 uppercase">Main Lagi</button>
+        <div id="level-modal" class="hidden-screen fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-[320px] rounded-[2.5rem] p-8 text-center shadow-2xl">
+                <h2 id="selected-level-title" class="text-2xl font-black text-slate-800 mb-6 italic uppercase">SIAP?</h2>
+                <button onclick="startAction('solo')" class="w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-black mb-3">MAIN SENDIRI</button>
+                <button onclick="startAction('multi')" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg">BUAT LOBBY</button>
+                <button onclick="q('#level-modal').classList.add('hidden-screen')" class="mt-4 text-slate-400 font-bold text-xs uppercase">Batal</button>
             </div>
         </div>
 
+        <div id="custom-alert" class="hidden-screen fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-6">
+            <div class="bg-white w-full max-w-[320px] rounded-[3rem] p-8 text-center border-b-8 border-slate-200">
+                <div id="alert-icon" class="text-6xl mb-4">🏆</div>
+                <h2 id="alert-title" class="text-3xl font-black text-slate-800 mb-2 italic">FINISH!</h2>
+                <p id="alert-msg" class="text-slate-500 font-bold mb-8">Balapan selesai!</p>
+                <button onclick="location.reload()" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase">Main Lagi</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // === FIREBASE CONFIG ===
         const firebaseConfig = {
             apiKey: "AIzaSyAYyotrlpW62rjE31ar-yMRWFy4ggGw-Ho",
             authDomain: "mathquest-multiplayer.firebaseapp.com",
@@ -241,53 +139,42 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let currentAns, score = 0, currentInp = "", timeLeft = 100, timerInterval, currentModule = 0;
+        let currentAns, score = 0, currentInp = "", timeLeft = 60, timerInterval, currentModule = 0;
         let isMultiplayer = false, roomId = null, playerRole = null;
-        const TARGET_SCORE = 200; 
-        const STAGE_NAMES = ["STARTER", "KART", "DRIFT", "RALLY", "F1"];
-
         const q = (id) => document.getElementById(id.replace('#', ''));
+        const LEVEL_NAMES = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5"];
 
-        // INITIALIZE ROOM LIST LISTENER
         listenRoomList();
 
         function listenRoomList() {
             db.ref('rooms').on('value', (snap) => {
                 const rooms = snap.val();
-                const container = q('#room-list');
-                container.innerHTML = '';
-
-                let activeCount = 0;
+                const container = q('#room-list'); container.innerHTML = '';
+                let count = 0;
                 if (rooms) {
                     for (let id in rooms) {
                         if (rooms[id].status === 'waiting') {
-                            activeCount++;
-                            const levelIndex = rooms[id].level;
+                            count++;
                             const div = document.createElement('div');
-                            div.className = "flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 shadow-sm hover:border-indigo-400 cursor-pointer transition-all";
+                            div.className = "bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center cursor-pointer mb-2 hover:border-indigo-400 transition-all";
                             div.onclick = () => joinExistingRoom(id);
                             div.innerHTML = `
-                                <div>
-                                    <span class="block text-[8px] font-black text-indigo-500 uppercase">LOBBY #${id}</span>
-                                    <span class="text-xs font-bold text-slate-700">Stage: ${STAGE_NAMES[levelIndex]}</span>
+                                <div class="text-left">
+                                    <span class="block text-[8px] font-black text-indigo-500 uppercase">Room #${id}</span>
+                                    <span class="text-xs font-bold text-slate-700">${LEVEL_NAMES[rooms[id].level]}</span>
                                 </div>
-                                <div class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">JOIN 🏁</div>
-                            `;
+                                <span class="text-[10px] bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full font-black">JOIN 🏁</span>`;
                             container.appendChild(div);
                         }
                     }
                 }
-
-                if (activeCount === 0) {
-                    container.innerHTML = '<div class="text-center py-4 text-slate-400 text-[10px] italic">No active lobbies. Create one!</div>';
-                }
+                if (count === 0) container.innerHTML = '<div class="text-[10px] text-slate-400 italic text-center py-4">Belum ada room aktif...</div>';
             });
         }
 
         function selectLevelMenu(lvl) {
             currentModule = lvl;
-            const titles = ["STAGE 00: STARTER", "STAGE 01: KART", "STAGE 02: DRIFT", "STAGE 03: RALLY", "STAGE 04: F1"];
-            q('#selected-level-title').innerText = titles[lvl];
+            q('#selected-level-title').innerText = LEVEL_NAMES[lvl];
             q('#level-modal').classList.remove('hidden-screen');
         }
 
@@ -295,9 +182,7 @@
             q('#level-modal').classList.add('hidden-screen');
             if (mode === 'solo') {
                 isMultiplayer = false; setupUI('game'); generateQuestion(); startTimer();
-            } else {
-                createNewRoom();
-            }
+            } else createNewRoom();
         }
 
         function createNewRoom() {
@@ -305,11 +190,7 @@
             playerRole = 'p1'; isMultiplayer = true;
             q('#display-room-id').innerText = roomId;
             setupUI('waiting');
-            db.ref('rooms/' + roomId).set({
-                status: 'waiting', level: currentModule,
-                p1_score: 0, p2_score: 0,
-                question: "Wait...", answer: 0
-            });
+            db.ref('rooms/' + roomId).set({ status: 'waiting', level: currentModule, p1_score: 0, p2_score: 0, question: "", answer: 0 });
             db.ref('rooms/' + roomId).onDisconnect().remove();
             listenRoom();
         }
@@ -319,26 +200,22 @@
             db.ref('rooms/' + roomId).once('value', (s) => {
                 const d = s.val();
                 if(d && d.status === 'waiting') {
-                    currentModule = d.level; // Sync level with host
+                    currentModule = d.level;
                     db.ref('rooms/' + roomId).update({ status: 'playing' });
                     setupUI('game'); listenRoom();
                 }
             });
         }
 
-        function joinGame() {
-            const inputId = q('#room-input').value;
-            if(!inputId) return;
-            joinExistingRoom(inputId);
-        }
+        function joinGame() { const id = q('#room-input').value; if(id) joinExistingRoom(id); }
 
         function listenRoom() {
             db.ref('rooms/' + roomId).on('value', (s) => {
-                const d = s.val();
-                if (!d) return;
+                const d = s.val(); if (!d) return;
                 updateRaceTrack(d.p1_score || 0, d.p2_score || 0);
                 if (d.status === 'playing') {
                     setupUI('game');
+                    if (q('#question').innerText !== d.question) clearInp(); // CLEAR INPUT TIAP SOAL BERUBAH
                     currentAns = d.answer;
                     q('#question').innerText = d.question;
                     if (!timerInterval) startTimer();
@@ -347,70 +224,56 @@
         }
 
         function updateRaceTrack(p1, p2) {
-            const p1Pos = Math.min((p1 / TARGET_SCORE) * 85, 85);
-            const p2Pos = Math.min((p2 / TARGET_SCORE) * 85, 85);
+            const p1Pos = Math.min((p1 / 200) * 85, 85);
+            const p2Pos = Math.min((p2 / 200) * 85, 85);
             q('#p1-rider').style.left = p1Pos + "%";
-            if (isMultiplayer) {
-                q('#p2-rider').classList.remove('hidden');
-                q('#p2-rider').style.left = p2Pos + "%";
-            }
+            if (isMultiplayer) { q('#p2-rider').classList.remove('hidden'); q('#p2-rider').style.left = p2Pos + "%"; }
         }
 
         function generateQuestion() {
             let ques, ans;
             const opType = Math.floor(Math.random() * 4);
-
-            if (currentModule === 0) {
-                let n1 = Math.floor(Math.random() * 5) + 1;
-                let n2 = Math.floor(Math.random() * 5) + 1;
+            
+            if (currentModule === 0) { // Level 1: Starter
+                let n1 = Math.floor(Math.random() * 5) + 1, n2 = Math.floor(Math.random() * 5) + 1;
                 if (Math.random() > 0.5) { ans = n1 + n2; ques = `${n1} + ${n2}`; }
                 else { let m = Math.max(n1,n2), s = Math.min(n1,n2); ans = m-s; ques = `${m} - ${s}`; }
-            } 
-            else if (currentModule === 1) {
-                let n1 = Math.floor(Math.random() * 10) + 1;
-                let n2 = Math.floor(Math.random() * 10) + 1;
+            } else if (currentModule === 1) { // Level 2: Kart
+                let n1 = Math.floor(Math.random() * 10) + 1, n2 = Math.floor(Math.random() * 10) + 1;
                 if (opType === 0) { ans = n1 + n2; ques = `${n1} + ${n2}`; }
                 else if (opType === 1) { let m = Math.max(n1,n2), s = Math.min(n1,n2); ans = m-s; ques = `${m} - ${s}`; }
-                else if (opType === 2) { n1 = Math.floor(Math.random()*5)+1; ans = n1*2; ques = `${n1} x 2`; }
-                else { ans = Math.floor(Math.random()*5)+1; ques = `${ans*2} : 2`; }
-            } 
-            else if (currentModule === 2) {
-                let n1 = Math.floor(Math.random() * 15) + 2;
-                ans = Math.floor(Math.random() * 10) + 1;
-                if (opType === 0) { ques = `x + ${n1} = ${ans + n1}`; }
-                else if (opType === 1) { ques = `x - ${n1} = ${ans}`; ans = ans + n1; }
-                else if (opType === 2) { n1 = Math.floor(Math.random()*5)+2; ques = `${n1}x = ${n1*ans}`; }
-                else { n1 = Math.floor(Math.random()*5)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
-            } 
-            else if (currentModule === 3) {
-                let n1 = Math.floor(Math.random() * 40) + 10;
-                ans = Math.floor(Math.random() * 20) + 5;
+                else { n1 = Math.floor(Math.random()*5)+1; ans = n1*2; ques = `${n1} x 2`; }
+            } else if (currentModule === 2) { // Level 3: Drift
+                let n1 = Math.floor(Math.random() * 15) + 2; ans = Math.floor(Math.random() * 10) + 1;
+                if (opType < 2) { ques = `x + ${n1} = ${ans + n1}`; }
+                else { n1 = Math.floor(Math.random()*5)+2; ques = `${n1}x = ${n1*ans}`; }
+            } else if (currentModule === 3) { // Level 4: Rally
+                let n1 = Math.floor(Math.random() * 30) + 5; ans = Math.floor(Math.random() * 15) + 5;
                 if (opType === 0) { ques = `${n1} + x = ${n1 + ans}`; }
                 else if (opType === 1) { ques = `${n1 + ans} - x = ${n1}`; }
-                else if (opType === 2) { n1 = Math.floor(Math.random()*12)+2; ques = `${n1}x = ${n1*ans}`; }
-                else { n1 = Math.floor(Math.random()*10)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
-            } 
-            else {
-                let n1 = Math.floor(Math.random() * 100) + 20;
-                ans = Math.floor(Math.random() * 50) + 10;
+                else { n1 = Math.floor(Math.random()*8)+3; ques = `${n1}x = ${n1*ans}`; }
+            } else { // Level 5: Expert
+                let n1 = Math.floor(Math.random() * 100) + 20; ans = Math.floor(Math.random() * 40) + 10;
                 if (opType === 0) { ques = `x + ${n1} = ${ans + n1}`; }
                 else if (opType === 1) { ques = `${n1 + ans} - x = ${ans}`; ans = n1; }
-                else if (opType === 2) { n1 = Math.floor(Math.random()*20)+5; ques = `${n1}x = ${n1*ans}`; }
-                else { n1 = Math.floor(Math.random()*15)+2; ques = `x : ${n1} = ${ans}`; ans = ans * n1; }
+                else { n1 = Math.floor(Math.random()*15)+5; ques = `${n1}x = ${n1*ans}`; }
             }
 
             if (isMultiplayer) db.ref('rooms/' + roomId).update({ question: ques, answer: ans });
-            else { currentAns = ans; q('#question').innerText = ques; }
+            else { 
+                if (q('#question').innerText !== ques) clearInp();
+                currentAns = ans; q('#question').innerText = ques; 
+            }
         }
 
         function submitAns() {
             if (parseInt(currentInp) === currentAns) {
                 score += 10;
-                timeLeft = Math.min(timeLeft + 8, 100); 
+                q('#my-score-val').innerText = score;
                 if (isMultiplayer) {
                     let up = {}; up[playerRole + '_score'] = score;
                     db.ref('rooms/' + roomId).update(up);
-                    generateQuestion(); 
+                    generateQuestion();
                 } else { updateRaceTrack(score, 0); generateQuestion(); }
                 clearInp();
             } else {
@@ -422,12 +285,11 @@
         function startTimer() {
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                timeLeft -= (0.4 + (score / 200));
-                q('#timer-bar').style.width = timeLeft + "%";
-                if (timeLeft <= 30) q('#timer-bar').classList.replace('bg-indigo-500', 'bg-rose-500');
-                else q('#timer-bar').classList.replace('bg-rose-500', 'bg-indigo-500');
+                timeLeft -= 1; // WAKTU TETAP (FIXED)
+                q('#timer-digital').innerText = Math.max(0, timeLeft);
+                if (timeLeft <= 10) q('#timer-digital').classList.add('text-rose-600');
                 if (timeLeft <= 0) handleGameOver();
-            }, 100);
+            }, 1000);
             if (!isMultiplayer || playerRole === 'p1') generateQuestion();
         }
 
@@ -436,13 +298,12 @@
             const modal = q('#custom-alert'), title = q('#alert-title'), msg = q('#alert-msg'), icon = q('#alert-icon');
             if (isMultiplayer) {
                 db.ref('rooms/' + roomId).once('value', (s) => {
-                    const d = s.val();
-                    if(!d) return;
+                    const d = s.val(); if(!d) return;
                     const s1 = d.p1_score, s2 = d.p2_score;
                     let my = playerRole === 'p1' ? s1 : s2, op = playerRole === 'p1' ? s2 : s1;
-                    if (my > op) { title.innerText = "YOU WIN!"; icon.innerText = "🏆"; msg.innerText = `Skor ${my} vs ${op}. Kamu juara!`; }
-                    else if (my < op) { title.innerText = "DEFEAT!"; icon.innerText = "💀"; msg.innerText = `Skor ${my} vs ${op}. Lawan lebih cepat!`; }
-                    else { title.innerText = "DRAW!"; icon.innerText = "🤝"; msg.innerText = "Seri! Balapan yang sengit."; }
+                    if (my > op) { title.innerText = "MENANG!"; icon.innerText = "🏆"; msg.innerText = `Skor ${my} vs ${op}. Kamu pemenangnya!`; }
+                    else if (my < op) { title.innerText = "KALAH!"; icon.innerText = "💀"; msg.innerText = `Skor ${my} vs ${op}. Lawan lebih cepat!`; }
+                    else { title.innerText = "SERI!"; icon.innerText = "🤝"; msg.innerText = "Balapan yang seimbang!"; }
                     db.ref('rooms/' + roomId).remove();
                 });
             } else { title.innerText = "FINISH!"; icon.innerText = "🏁"; msg.innerText = `Waktu habis! Skor akhir: ${score}`; }
@@ -455,7 +316,7 @@
             if (screen === 'game') { q('#game-screen').classList.remove('hidden-screen'); q('#game-header').classList.remove('hidden-screen'); }
         }
 
-        function press(n) { if (currentInp.length < 5) { currentInp += n; q('#user-input').innerText = currentInp; } }
+        function press(n) { if (currentInp.length < 6) { currentInp += n; q('#user-input').innerText = currentInp; } }
         function del() { currentInp = currentInp.slice(0, -1); q('#user-input').innerText = currentInp; }
         function clearInp() { currentInp = ""; q('#user-input').innerText = ""; }
     </script>
